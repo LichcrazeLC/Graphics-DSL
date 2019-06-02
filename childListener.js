@@ -3,10 +3,12 @@ const glGrammarLexer = require('./glGrammarLexer');
 const glGrammarParser = require('./glGrammarParser');
 var glGrammarListener = require('./glGrammarListener').glGrammarListener;
 
-ChildGlGrammarListener = function(res) {
-    this.Res = res;   
+var webglImpl = require('./lab');
+
+ChildGlGrammarListener = function() {  
     glGrammarListener.call(this); // inherit default listener
     return this;
+
 };
 
 // inherit default listener
@@ -15,13 +17,14 @@ ChildGlGrammarListener.prototype.constructor = ChildGlGrammarListener;
 
 // override default listener behavior
 ChildGlGrammarListener.prototype.enterProgram = function(ctx) {          
-    this.Res.write("<strong>");   
-    console.log("wadasfasd");
+    //this.Res.write("<strong>");   
+    console.log("program Entered!");
+    webglImpl.createCylinder();
 };
-
+    
 ChildGlGrammarListener.prototype.exitProgramName = function(ctx) {      
-    this.Res.write(ctx.WORD().getText());
-    this.Res.write("</strong> ");
+    // this.Res.write(ctx.WORD().getText());
+    // this.Res.write("</strong> ");
 }; 
 
 ChildGlGrammarListener.prototype.exitEmoticon = function(ctx) {      

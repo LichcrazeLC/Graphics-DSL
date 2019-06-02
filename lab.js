@@ -1,6 +1,9 @@
 "use strict";
 
 var gl;
+var canvas;
+var program;
+
 var i = 0;
 
 var thetaLoc;
@@ -17,15 +20,17 @@ var color = vec4(0.5, 0.5, 0.5, 1);
 var globalPosition;
 var globalScale;
 
+var v_Position;
+var colorPosition;
+
 //ANTLR STUFF
 const antlr4 = require('./antlr4/index');
 const glGrammarLexer = require('./glGrammarLexer');
 const glGrammarParser = require('./glGrammarParser');
 var ChildGlGrammarListener = require('./childListener').ChildGlGrammarListener;
 
-
-window.onload = function init() {
-    var canvas = document.getElementById("gl-canvas");
+window.onload = function init () {
+    canvas = document.getElementById("gl-canvas");
 
     gl = WebGLUtils.setupWebGL(canvas);
     if (!gl) { alert("WebGL isn't available"); }
@@ -33,19 +38,59 @@ window.onload = function init() {
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
-    var program = initShaders(gl, "vertex-shader", "fragment-shader");
+    program = initShaders(gl, "vertex-shader", "fragment-shader");
 
     gl.useProgram(program);
 
-    var v_Position = gl.getAttribLocation(program, "v_Position");
-    var colorPosition = gl.getAttribLocation(program, "a_color");
+    v_Position = gl.getAttribLocation(program, "v_Position");
+    colorPosition = gl.getAttribLocation(program, "a_color");
     
     thetaLoc = gl.getUniformLocation(program, "theta");
     globalPosition = gl.getUniformLocation(program, "tr");
     globalScale = gl.getUniformLocation(program, "scale");
 
+    var input = "BEGIN myProgram { DRAW (CIRCLE myCircle SIZE 1 COLOR BLUE AT 1,1); } END";   
+    var chars = new antlr4.InputStream(input);
+    var lexer = new glGrammarLexer.glGrammarLexer(chars);
+    var tokens  = new antlr4.CommonTokenStream(lexer);
+    var parser = new glGrammarParser.glGrammarParser(tokens);
+    parser.buildParseTrees = true;   
+    var tree = parser.program();   
+    var customListener = new ChildGlGrammarListener();
+    antlr4.tree.ParseTreeWalker.DEFAULT.walk(customListener, tree);
 
-    function cube(x, y, z, scl) {  
+    // spinX_button.onclick = function () {objects[currently_selected_index].axis = objects[currently_selected_index].xAxis; objects[currently_selected_index].rotating = true; objects[currently_selected_index].rotation = 0;};
+    // spinY_button.onclick = function () {objects[currently_selected_index].axis = objects[currently_selected_index].yAxis; objects[currently_selected_index].rotating = true; objects[currently_selected_index].rotation = 0;};
+    // spinZ_button.onclick = function () {objects[currently_selected_index].axis = objects[currently_selected_index].zAxis; objects[currently_selected_index].rotating = true; objects[currently_selected_index].rotation = 0;};
+
+    // var sliderRotationx = document.getElementById("X_rotation_slider");
+    // sliderRotationx.oninput = function() {objects[currently_selected_index].axis = objects[currently_selected_index].xAxis; objects[currently_selected_index].rotating = false; objects[currently_selected_index].rotation = sliderRotationx.value;};
+
+    // var sliderx = document.getElementById("X_translation_slider");
+    // sliderx.oninput = function() {objects[currently_selected_index].taxis = objects[currently_selected_index].txAxis; objects[currently_selected_index].translation = sliderx.value;};
+
+    // var sliderScalex = document.getElementById("X_scale_slider");
+    // sliderScalex.oninput = function() {objects[currently_selected_index].saxis = objects[currently_selected_index].sxAxis; objects[currently_selected_index].scale = sliderScalex.value;};
+
+
+    function render_scene() {
+
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        for (var i = 0; i < objects.length; i++) {
+            objects[i].render();
+        }
+
+        requestAnimFrame(render_scene);
+
+    }
+
+    render_scene();
+
+};
+
+function builder () {
+    
+    this.cube = function(x, y, z, scl) {  
 
         this.translation = 0;
         
@@ -183,7 +228,7 @@ window.onload = function init() {
         }
     }
 
-    function cylinder(x, y, z, r) {
+    this.cylinder = function(x, y, z, r) {
 
         this.theta = [45.0, 45.0, 45.0];
 
@@ -301,7 +346,7 @@ window.onload = function init() {
 
     }
 
-    function cone(x, y, z, r) {
+    this.cone = function (x, y, z, r) {
 
         this.theta = [45.0, 45.0, 45.0];
 
@@ -404,91 +449,19 @@ window.onload = function init() {
         
     }
 
-    // var get_cone_button = document.getElementById("GetCone");
-    // var get_cube_button = document.getElementById("GetCube");
-    // var get_cylinder_button = document.getElementById("GetCylinder");
-
-    var newCylinder = new cylinder(0, 0, 0, 0.1);
-    newCylinder.draw();
-    objects.push(newCylinder);
-
-    // get_cone_button.onclick = function () {
-
-    //     var newCone = new cone(0, 0, 0, 0.1);
-    //     newCone.draw();
-    //     objects.push(newCone);
-
-    // };
-
-    // get_cube_button.onclick = function () {
-
-    //     var newCube = new cube(0, 0, 0, 0.1);
-    //     newCube.draw();
-    //     objects.push(newCube);
-
-    // };
-
-    // get_cylinder_button.onclick = function () {
-
-    //     var newCylinder = new cylinder(0, 0, 0, 0.1);
-    //     newCylinder.draw();
-    //     objects.push(newCylinder);
-
-    //};
-
-    
-    // var spinX_button = document.getElementById("SpinX");
-    // var spinY_button = document.getElementById("SpinY");
-    // var spinZ_button = document.getElementById("SpinZ");
-
-    // spinX_button.onclick = function () {objects[currently_selected_index].axis = objects[currently_selected_index].xAxis; objects[currently_selected_index].rotating = true; objects[currently_selected_index].rotation = 0;};
-    // spinY_button.onclick = function () {objects[currently_selected_index].axis = objects[currently_selected_index].yAxis; objects[currently_selected_index].rotating = true; objects[currently_selected_index].rotation = 0;};
-    // spinZ_button.onclick = function () {objects[currently_selected_index].axis = objects[currently_selected_index].zAxis; objects[currently_selected_index].rotating = true; objects[currently_selected_index].rotation = 0;};
-
-    // var sliderRotationx = document.getElementById("X_rotation_slider");
-    // sliderRotationx.oninput = function() {objects[currently_selected_index].axis = objects[currently_selected_index].xAxis; objects[currently_selected_index].rotating = false; objects[currently_selected_index].rotation = sliderRotationx.value;};
-
-    // var sliderRotationy = document.getElementById("Y_rotation_slider");
-    // sliderRotationy.oninput = function() {objects[currently_selected_index].axis = objects[currently_selected_index].yAxis; objects[currently_selected_index].rotating = false; objects[currently_selected_index].rotation = sliderRotationy.value;};
-
-    // var sliderRotationz = document.getElementById("Z_rotation_slider");
-    // sliderRotationz.oninput = function() {objects[currently_selected_index].axis = objects[currently_selected_index].zAxis; objects[currently_selected_index].rotating = false; objects[currently_selected_index].rotation = sliderRotationz.value;};
-
-    // var sliderx = document.getElementById("X_translation_slider");
-    // sliderx.oninput = function() {objects[currently_selected_index].taxis = objects[currently_selected_index].txAxis; objects[currently_selected_index].translation = sliderx.value;};
-
-    // var slidery = document.getElementById("Y_translation_slider");
-    // slidery.oninput = function() {objects[currently_selected_index].taxis = objects[currently_selected_index].tyAxis; objects[currently_selected_index].translation = slidery.value;};
-
-    // var sliderz = document.getElementById("Z_translation_slider");
-    // sliderz.oninput = function() {objects[currently_selected_index].taxis = objects[currently_selected_index].tzAxis; objects[currently_selected_index].translation = sliderz.value;};
-
-    // var sliderScalex = document.getElementById("X_scale_slider");
-    // sliderScalex.oninput = function() {objects[currently_selected_index].saxis = objects[currently_selected_index].sxAxis; objects[currently_selected_index].scale = sliderScalex.value;};
-
-    // var sliderScaley = document.getElementById("Y_scale_slider");
-    // sliderScaley.oninput = function() {objects[currently_selected_index].saxis = objects[currently_selected_index].syAxis; objects[currently_selected_index].scale = sliderScaley.value;};
-
-    // var sliderScalez = document.getElementById("Z_scale_slider");
-    // sliderScalez.oninput = function() {objects[currently_selected_index].saxis = objects[currently_selected_index].szAxis; objects[currently_selected_index].scale = sliderScalez.value;};
-
-
-
-    function render_scene() {
-
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        for (var i = 0; i < objects.length; i++) {
-            objects[i].render();
-        }
-
-        requestAnimFrame(render_scene);
-
+    this.createCylinder = function () {
+        var newCylinder = new this.cylinder(0, 0, 0, 0.5);
+        newCylinder.draw();
+        objects.push(newCylinder);
     }
 
-    render_scene();
+    //this.createCylinder();
 
-};
+}
 
+exports.createCylinder = function () {
+    new builder().createCylinder();
+}; 
 
 
 
