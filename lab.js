@@ -23,6 +23,12 @@ var globalScale;
 var v_Position;
 var colorPosition;
 
+var shape_to_draw;
+
+var global_size = 0;
+var global_x = 0;
+var global_y = 0;
+
 //ANTLR STUFF
 const antlr4 = require('./antlr4/index');
 const glGrammarLexer = require('./glGrammarLexer');
@@ -49,7 +55,7 @@ window.onload = function init () {
     globalPosition = gl.getUniformLocation(program, "tr");
     globalScale = gl.getUniformLocation(program, "scale");
 
-    var input = "BEGIN myProgram { DRAW (CIRCLE myCircle SIZE 1 COLOR BLUE AT 1,1); } END";   
+    var input = "BEGIN myProgram { DRAW (SQUARE mySquare SIZE 2 COLOR BLUE AT 3,1); } END";   
     var chars = new antlr4.InputStream(input);
     var lexer = new glGrammarLexer.glGrammarLexer(chars);
     var tokens  = new antlr4.CommonTokenStream(lexer);
@@ -90,7 +96,7 @@ window.onload = function init () {
 
 function builder () {
     
-    this.cube = function(x, y, z, scl) {  
+    this.square = function(x, y, z, scl) {  
 
         this.translation = 0;
         
@@ -105,7 +111,7 @@ function builder () {
         this.tzAxis = 2;
         this.taxis = this.txAxis;
 
-        this.theta = [45.0, 45.0, 45.0];
+        this.theta = [0, 0, 0];
         this.xAxis = 0;
         this.yAxis = 1;
         this.zAxis = 2;
@@ -150,42 +156,7 @@ function builder () {
             this.vertices.push(this.bottom_right_corner);
             this.vertices.push(this.top_right_corner);
 
-            this.vertices.push(this.bottom_left_corner_2);
-            this.vertices.push(this.top_left_corner_2);
-            this.vertices.push(this.bottom_right_corner_2);
-            this.vertices.push(this.top_left_corner_2);
-            this.vertices.push(this.bottom_right_corner_2);
-            this.vertices.push(this.top_right_corner_2);
-
-            this.vertices.push(this.bottom_left_corner);
-            this.vertices.push(this.bottom_right_corner);
-            this.vertices.push(this.bottom_right_corner_2);
-            this.vertices.push(this.bottom_left_corner_2);
-            this.vertices.push(this.bottom_left_corner);
-            this.vertices.push(this.bottom_right_corner_2);
-
-            this.vertices.push(this.top_left_corner);
-            this.vertices.push(this.top_right_corner);
-            this.vertices.push(this.top_right_corner_2);
-            this.vertices.push(this.top_left_corner_2);
-            this.vertices.push(this.top_left_corner);
-            this.vertices.push(this.top_right_corner_2);
-
-            this.vertices.push(this.bottom_left_corner);
-            this.vertices.push(this.bottom_left_corner_2);
-            this.vertices.push(this.top_left_corner);
-            this.vertices.push(this.top_left_corner_2);
-            this.vertices.push(this.bottom_left_corner_2);
-            this.vertices.push(this.top_left_corner);
-
-            this.vertices.push(this.bottom_right_corner);
-            this.vertices.push(this.bottom_right_corner_2);
-            this.vertices.push(this.top_right_corner);
-            this.vertices.push(this.top_right_corner_2);
-            this.vertices.push(this.bottom_right_corner_2);
-            this.vertices.push(this.top_right_corner);
-
-            for (i = 0; i <= 35; i++) {
+            for (i = 0; i <= 5; i++) {
                 this.colors.push(color);
             }
 
@@ -228,9 +199,9 @@ function builder () {
         }
     }
 
-    this.cylinder = function(x, y, z, r) {
+    this.circle = function(x, y, z, r) {
 
-        this.theta = [45.0, 45.0, 45.0];
+        this.theta = [0, 0, 0];
 
         this.center_matrix = [0, 0, 0];
 
@@ -276,31 +247,11 @@ function builder () {
             for (i = 0; i <= 200; i += 1) {
 
                 this.vertices.push(this.center);
-                this.vertices.push(this.second_point);
-                this.vertices.push(vec3(this.r * Math.cos(i * 2 * Math.PI / 200) + this.translation_x, this.translation_y, this.r * Math.sin(i * 2 * Math.PI / 200) + this.translation_z));
-                this.vertices.push(this.second_point);
-                this.vertices.push(vec3(this.r * Math.cos(i * 2 * Math.PI / 200) + this.translation_x, this.translation_y + 0.15, this.r * Math.sin(i * 2 * Math.PI / 200) + this.translation_z));
-                this.vertices.push(vec3(this.r * Math.cos(i * 2 * Math.PI / 200) + this.translation_x, this.translation_y, this.r * Math.sin(i * 2 * Math.PI / 200) + this.translation_z));
+                this.vertices.push(vec3(this.r * Math.cos((i+1) * 2 * Math.PI / 200) + this.translation_x, this.r * Math.sin((i+1) * 2 * Math.PI / 200) + this.translation_y, this.translation_z));
+                this.vertices.push(vec3(this.r * Math.cos(i * 2 * Math.PI / 200) + this.translation_x, this.r * Math.sin(i * 2 * Math.PI / 200) + this.translation_y, this.translation_z));
                 this.colors.push(this.color);
                 this.colors.push(this.color);
                 this.colors.push(this.color);
-                this.colors.push(this.color);
-                this.colors.push(this.color);
-                this.colors.push(this.color);
-
-                this.vertices.push(vec3(this.r * Math.cos(i * Math.PI / 100) + this.translation_x, this.translation_y, this.r * Math.sin(i * Math.PI / 100) + this.translation_z));
-                this.colors.push(this.color);
-                this.vertices.push(vec3(this.r * Math.cos((i + 1) * Math.PI / 100) + this.translation_x, this.translation_y, this.r * Math.sin((i + 1) * Math.PI / 100) + this.translation_z));
-                this.colors.push(this.color);
-                this.vertices.push(this.center);
-                this.colors.push(this.color);
-
-                this.vertices.push(vec3(this.r * Math.cos(i * Math.PI / 100) + this.translation_x, this.translation_y + 0.15, this.r * Math.sin(i * Math.PI / 100) + this.translation_z));
-                this.colors.push(this.color);
-                this.vertices.push(vec3(this.r * Math.cos((i + 1) * Math.PI / 100) + this.translation_x, this.translation_y + 0.15, this.r * Math.sin((i + 1) * Math.PI / 100) + this.translation_z));
-                this.colors.push(this.color);
-                this.vertices.push(this.center);
-                this.colors.push(this.color);   
             }
 
         }
@@ -346,122 +297,77 @@ function builder () {
 
     }
 
-    this.cone = function (x, y, z, r) {
-
-        this.theta = [45.0, 45.0, 45.0];
-
-        this.center_matrix = [0, 0, 0];
-
-        this.xAxis = 0;
-        this.yAxis = 1;
-        this.zAxis = 2;
-        this.axis = this.xAxis;
-
-        this.txAxis = 0;
-        this.tyAxis = 1;
-        this.tzAxis = 2;
-        this.taxis = this.txAxis;
-
-        this.sxAxis = 0;
-        this.syAxis = 1;
-        this.szAxis = 2;
-        this.saxis = this.sxAxis;
-        this.scale_x = 1;
-        this.scale_y = 1;
-        this.scale_z = 1;
-        this.scale_matrix = [this.scale_x, this.scale_y, this.scale_z];
-        this.scale = 1;
-
-        this.translation = 0;
-
-        this.rotating = false;
-        this.vertices = [];
-        this.colors = [];
-        this.rotation = 0;
-        this.translation_x = x;
-        this.translation_y = y;
-        this.translation_z = z;
-        this.translation_matrix = [this.translation_x, this.translation_y, this.translation_z];
-  
-
-        this.j = 0;
-        this.center = vec3(this.translation_x, this.translation_y, this.translation_z);
-        this.second_point = vec3(this.translation_x, this.translation_y + 0.15, this.translation_z);
-        this.color = color;
-        this.r = r;
-
-        this.draw = function () {
-
-            for (i = 0; i <= 200; i += 1) {
-
-                this.vertices.push(this.center);
-                this.colors.push(this.color);
-                this.vertices.push(this.second_point);
-                this.colors.push(this.color);
-                this.vertices.push(vec3(this.r * Math.cos(i * Math.PI / 100) + this.translation_x, this.translation_y, this.r * Math.sin(i * Math.PI / 100) + this.translation_z));
-                this.colors.push(this.color);
-
-                this.vertices.push(vec3(this.r * Math.cos(i * Math.PI / 100) + this.translation_x, this.translation_y, this.r * Math.sin(i * Math.PI / 100) + this.translation_z));
-                this.colors.push(this.color);
-                this.vertices.push(vec3(this.r * Math.cos((i + 1) * Math.PI / 100) + this.translation_x, this.translation_y, this.r * Math.sin((i + 1) * Math.PI / 100) + this.translation_z));
-                this.colors.push(this.color);
-                this.vertices.push(this.center);
-                this.colors.push(this.color);
-
-            }
-        }
-
-        this.render = function () {
-
-            var buffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-            gl.bufferData(gl.ARRAY_BUFFER, flatten(this.vertices), gl.STATIC_DRAW);
-
-            gl.vertexAttribPointer(v_Position, 3, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(v_Position);
-
-            var colorBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, flatten(this.colors), gl.STATIC_DRAW);
-
-            gl.vertexAttribPointer(colorPosition, 4, gl.FLOAT, false, 0, 0);
-            gl.enableVertexAttribArray(colorPosition);
-
-            if (this.rotating){
-                this.rotation += 1;
-            }
-
-            gl.uniform3fv(globalPosition, this.center_matrix);          
-
-            this.theta[this.axis] = this.rotation;
-            gl.uniform3fv(thetaLoc, this.theta);
-                 
-            this.translation_matrix[this.taxis] = this.translation;
-            gl.uniform3fv(globalPosition, this.translation_matrix);
-
-            this.scale_matrix[this.saxis] = this.scale;
-            gl.uniform3fv(globalScale, this.scale_matrix);
-
-            gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length);
-
-        }
-
-        
+    this.createCircle = function (x,y,r) {
+        var newCircle = new this.circle(x, y, 0, r);
+        newCircle.draw();
+        objects.push(newCircle);
     }
 
-    this.createCylinder = function () {
-        var newCylinder = new this.cylinder(0, 0, 0, 0.5);
-        newCylinder.draw();
-        objects.push(newCylinder);
+    this.createSquare = function (x,y,scl) {
+        var newSquare = new this.square(x, y, 0, scl);
+        newSquare.draw();
+        objects.push(newSquare);
     }
 
     //this.createCylinder();
 
 }
 
-exports.createCylinder = function () {
-    new builder().createCylinder();
+exports.drawShape = function () {
+    if (shape_to_draw == "circle")
+        new builder().createCircle(global_x, global_y, global_size);
+    else 
+        new builder().createSquare(global_x, global_y, global_size); 
 }; 
+
+exports.setRedColor = function ()
+{
+    color = new vec4(1,0,0,1);
+};
+
+exports.setGreenColor = function ()
+{
+    color = new vec4(0,1,0,1);
+};
+
+exports.setBlueColor = function ()
+{
+    color = new vec4(0,0,1,1);
+};
+
+exports.setBlackColor = function ()
+{
+    color = new vec4(0,0,0,1);
+};
+
+exports.setShapeSquare = function ()
+{
+    shape_to_draw = "square";
+};
+
+exports.setShapeCircle = function ()
+{
+    shape_to_draw = "circle";
+};
+
+exports.setGlobalSize = function (size)
+{
+    global_size = size/4;
+};
+
+exports.setGlobalXCoord = function (x)
+{
+    global_x = x/10;
+};
+
+exports.setGlobalYCoord = function (y)
+{
+    global_y = y/10;
+};
+
+
+
+
 
 
 
