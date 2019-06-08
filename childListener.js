@@ -18,7 +18,7 @@ ChildGlGrammarListener.prototype.constructor = ChildGlGrammarListener;
 // override default listener behavior
 ChildGlGrammarListener.prototype.enterProgram = function(ctx) {          
     //this.Res.write("<strong>");   
-    console.log("program Entered!");
+    console.log("Program detected! Proceeding to PARSE....");
 };
     
 ChildGlGrammarListener.prototype.exitProgramName = function(ctx) {      

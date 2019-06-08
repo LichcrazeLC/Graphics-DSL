@@ -1,2 +1,3 @@
 "use strict";
-console.log("ello");
+console.log("Webpack loaded files successfully!!!");
+

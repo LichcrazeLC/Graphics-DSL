@@ -35,11 +35,16 @@ const glGrammarLexer = require('./glGrammarLexer');
 const glGrammarParser = require('./glGrammarParser');
 var ChildGlGrammarListener = require('./childListener').ChildGlGrammarListener;
 
+//INPUT CODE
+const txt = require('text-loader!./code.txt');
+
 window.onload = function init () {
     canvas = document.getElementById("gl-canvas");
 
     gl = WebGLUtils.setupWebGL(canvas);
     if (!gl) { alert("WebGL isn't available"); }
+
+    console.log("Input code is ----> " + (txt));
 
     gl.viewport(0, 0, canvas.width, canvas.height);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
@@ -54,8 +59,8 @@ window.onload = function init () {
     thetaLoc = gl.getUniformLocation(program, "theta");
     globalPosition = gl.getUniformLocation(program, "tr");
     globalScale = gl.getUniformLocation(program, "scale");
-
-    var input = "BEGIN myProgram { DRAW (SQUARE mySquare SIZE 2 COLOR BLUE AT 3,1); } END";   
+    
+    var input = txt;   
     var chars = new antlr4.InputStream(input);
     var lexer = new glGrammarLexer.glGrammarLexer(chars);
     var tokens  = new antlr4.CommonTokenStream(lexer);
@@ -364,6 +369,7 @@ exports.setGlobalYCoord = function (y)
 {
     global_y = y/10;
 };
+
 
 
 

@@ -1,0 +1,4 @@
+BEGIN 
+    myProgram 
+        { DRAW (SQUARE mySquare SIZE 1 COLOR BLUE AT 3,1); } 
+END
