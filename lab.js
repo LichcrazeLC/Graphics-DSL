@@ -30,6 +30,7 @@ var global_x = 0;
 var global_y = 0;
 
 var action;
+var targetObject;
 
 //ANTLR STUFF
 const antlr4 = require('./antlr4/index');
@@ -91,7 +92,6 @@ window.onload = function init () {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         for (var i = 0; i < objects.length; i++) {
             objects[i].render();
-            console.log(objects.length);
         }
 
         requestAnimFrame(render_scene);
@@ -104,12 +104,13 @@ window.onload = function init () {
 
 function builder () {
     
-    this.square = function(x, y, z, scl) {  
+    this.square = function(x, y, z, scl, id) {  
 
         this.translation = 0;
+        this.id = id;
         
-        this.center_matrix = [0, 0, 0];
-
+        this.center_matrix = [-3, -3, -3];
+        
         this.select_color = vec4(0, 0, 1, 0.1);
 
         this.selected = false;
@@ -135,6 +136,8 @@ function builder () {
         this.scale_matrix = [this.scale_x, this.scale_y, this.scale_z];
         this.scale = 1;
 
+        this.rotationSpeed;
+        
         this.rotating = false;
         this.vertices = [];
         this.colors = [];
@@ -187,7 +190,7 @@ function builder () {
             gl.enableVertexAttribArray(colorPosition);
 
             if (this.rotating){
-               this.rotation += 1;
+               this.rotation += this.rotationSpeed;
             }   
 
                 gl.uniform3fv(globalPosition, this.center_matrix);          
@@ -207,9 +210,11 @@ function builder () {
         }
     }
 
-    this.circle = function(x, y, z, r) {
+    this.circle = function(x, y, z, r, id) {
 
         this.theta = [0, 0, 0];
+
+        this.id = id;
 
         this.center_matrix = [0, 0, 0];
 
@@ -234,6 +239,8 @@ function builder () {
         this.scale = 1;
 
         this.translation = 0;
+
+        this.rotationSpeed;
 
         this.rotating = false;
         this.vertices = [];
@@ -282,7 +289,7 @@ function builder () {
             gl.enableVertexAttribArray(colorPosition);
 
             if (this.rotating){
-                this.rotation += 1;
+                this.rotation += this.rotationSpeed;
             }
 
                 gl.uniform3fv(globalPosition, this.center_matrix);          
@@ -305,25 +312,41 @@ function builder () {
 
     }
 
-    this.createCircle = function (x,y,r) {
-        var newCircle = new this.circle(x, y, 0, r);
+    this.createCircle = function (x,y,r,id) {
+        var newCircle = new this.circle(0, 0, 0, r, id);
         newCircle.draw();
+
+        newCircle.taxis = newCircle.txAxis;
+        newCircle.translation = x;
+
+        newCircle.taxis = newCircle.tyAxis;
+        newCircle.translation = y;
+
         objects.push(newCircle);
     }
 
-    this.createSquare = function (x,y,scl) {
-        var newSquare = new this.square(x, y, 0, scl);
+    this.createSquare = function (x,y,scl,id) {
+        var newSquare = new this.square(0, 0, 0, scl, id);
         newSquare.draw();
+        
+        newSquare.taxis = newSquare.txAxis;
+        newSquare.translation = x;
+
+        newSquare.taxis = newSquare.tyAxis;
+        newSquare.translation = y;
+
         objects.push(newSquare);
     }
 
 }
 
 exports.drawShape = function () {
-    if (shape_to_draw == "circle")
-        new builder().createCircle(global_x, global_y, global_size);
-    else 
-        new builder().createSquare(global_x, global_y, global_size); 
+    if (shape_to_draw == "circle"){
+        new builder().createCircle(global_x, global_y, global_size, targetObject);
+    }
+    else {
+        new builder().createSquare(global_x, global_y, global_size, targetObject); 
+    }
 }; 
 
 exports.setRedColor = function ()
@@ -358,17 +381,17 @@ exports.setShapeCircle = function ()
 
 exports.setGlobalSize = function (size)
 {
-    global_size = size/4;
+    global_size = size/6;
 };
 
 exports.setGlobalXCoord = function (x)
 {
-    global_x = x/10;
+    global_x = (x-10) / 10;
 };
 
 exports.setGlobalYCoord = function (y)
 {
-    global_y = y/10;
+    global_y = (y-5) / 10;
 };
 
 exports.setAction = function (act)
@@ -380,6 +403,23 @@ exports.getAction = function ()
 {
     return action;
 }
+
+exports.setObjectId = function (id)
+{
+    targetObject = id;
+}
+
+exports.rotateObject = function ()
+{
+    objects.forEach(element => {
+        if (element.id == targetObject){
+            element.axis = element.zAxis;
+            element.rotationSpeed = global_size;
+            element.rotating = true;
+        }
+    });
+}
+
 
 
 

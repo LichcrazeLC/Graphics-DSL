@@ -43,11 +43,9 @@ glGrammarListener.prototype.exitStatements = function(ctx) {
 
 // Enter a parse tree produced by glGrammarParser#action.
 glGrammarListener.prototype.enterAction = function(ctx) {
-    if (ctx.getText() == 'DRAW'){
-        webglImpl.setAction('DRAW');
-    } else {
-        webglImpl.setAction('');
-    }
+
+    webglImpl.setAction(ctx.getText());
+
 };
 
 // Exit a parse tree produced by glGrammarParser#action.
@@ -93,14 +91,17 @@ ChildGlGrammarListener.prototype.exitColor = function(ctx) {
 
 // Enter a parse tree produced by glGrammarParser#position.
 glGrammarListener.prototype.enterPosition = function(ctx) {
-    webglImpl.setGlobalXCoord(ctx.DIGIT(0) - 10);
-    webglImpl.setGlobalYCoord(ctx.DIGIT(1) - 5);
+    webglImpl.setGlobalXCoord(ctx.DIGIT(0));
+    webglImpl.setGlobalYCoord(ctx.DIGIT(1));
 };
 
 // Exit a parse tree produced by glGrammarParser#position.
 glGrammarListener.prototype.exitPosition = function(ctx) {
     if (webglImpl.getAction() == 'DRAW')
         webglImpl.drawShape();
+    else if (webglImpl.getAction() == 'ROTATE'){
+        
+    }
 };
 
 // Enter a parse tree produced by glGrammarParser#id.
@@ -109,6 +110,7 @@ glGrammarListener.prototype.enterId = function(ctx) {
 
 // Exit a parse tree produced by glGrammarParser#id.
 glGrammarListener.prototype.exitId = function(ctx) {
+    webglImpl.setObjectId(ctx.getText());
 };
 
 // Enter a parse tree produced by glGrammarParser#alphaNum.
@@ -136,6 +138,9 @@ glGrammarListener.prototype.enterSize = function(ctx) {
 
 // Exit a parse tree produced by glGrammarParser#size.
 glGrammarListener.prototype.exitSize = function(ctx) {
+    if (webglImpl.getAction() == 'ROTATE'){
+        webglImpl.rotateObject();
+    }
 };
 
 // Enter a parse tree produced by glGrammarParser#endProgram.
