@@ -1,4 +1,7 @@
 BEGIN 
     myProgram 
-        { DRAW (SQUARE mySquare SIZE 1 COLOR BLUE AT 3,1); } 
+        { 
+            DRAW (CIRCLE mySquare SIZE 1 COLOR RED AT 5,5);
+            DRAW (SQUARE mySquare SIZE 1 COLOR BLUE AT 0,0);
+        } 
 END

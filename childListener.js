@@ -16,15 +16,51 @@ ChildGlGrammarListener.prototype = Object.create(glGrammarListener.prototype);
 ChildGlGrammarListener.prototype.constructor = ChildGlGrammarListener;
 
 // override default listener behavior
-ChildGlGrammarListener.prototype.enterProgram = function(ctx) {          
-    //this.Res.write("<strong>");   
+ChildGlGrammarListener.prototype.enterProgram = function(ctx) {             
     console.log("Program detected! Proceeding to PARSE....");
+};
+
+glGrammarListener.prototype.exitProgram = function(ctx) {
+    console.log("Program END reached! Compilation successful!!!");
+};
+
+// Enter a parse tree produced by glGrammarParser#programName.
+glGrammarListener.prototype.enterProgramName = function(ctx) {
 };
     
 ChildGlGrammarListener.prototype.exitProgramName = function(ctx) {      
-    // this.Res.write(ctx.WORD().getText());
-    // this.Res.write("</strong> ");
+
 }; 
+
+// Enter a parse tree produced by glGrammarParser#statements.
+glGrammarListener.prototype.enterStatements = function(ctx) {
+};
+
+// Exit a parse tree produced by glGrammarParser#statements.
+glGrammarListener.prototype.exitStatements = function(ctx) {
+
+};
+
+// Enter a parse tree produced by glGrammarParser#action.
+glGrammarListener.prototype.enterAction = function(ctx) {
+    if (ctx.getText() == 'DRAW'){
+        webglImpl.setAction('DRAW');
+    } else {
+        webglImpl.setAction('');
+    }
+};
+
+// Exit a parse tree produced by glGrammarParser#action.
+glGrammarListener.prototype.exitAction = function(ctx) {
+};
+
+// Enter a parse tree produced by glGrammarParser#argument.
+glGrammarListener.prototype.enterArgument = function(ctx) {
+};
+
+// Exit a parse tree produced by glGrammarParser#argument.
+glGrammarListener.prototype.exitArgument = function(ctx) {
+};
 
 // Enter a parse tree produced by glGrammarParser#shape.
 glGrammarListener.prototype.enterShape = function(ctx) {
@@ -57,12 +93,39 @@ ChildGlGrammarListener.prototype.exitColor = function(ctx) {
 
 // Enter a parse tree produced by glGrammarParser#position.
 glGrammarListener.prototype.enterPosition = function(ctx) {
-    webglImpl.setGlobalXCoord(ctx.DIGIT(0));
-    webglImpl.setGlobalYCoord(ctx.DIGIT(1));
+    webglImpl.setGlobalXCoord(ctx.DIGIT(0) - 10);
+    webglImpl.setGlobalYCoord(ctx.DIGIT(1) - 5);
 };
 
 // Exit a parse tree produced by glGrammarParser#position.
 glGrammarListener.prototype.exitPosition = function(ctx) {
+    if (webglImpl.getAction() == 'DRAW')
+        webglImpl.drawShape();
+};
+
+// Enter a parse tree produced by glGrammarParser#id.
+glGrammarListener.prototype.enterId = function(ctx) {
+};
+
+// Exit a parse tree produced by glGrammarParser#id.
+glGrammarListener.prototype.exitId = function(ctx) {
+};
+
+// Enter a parse tree produced by glGrammarParser#alphaNum.
+glGrammarListener.prototype.enterAlphaNum = function(ctx) {
+};
+
+// Exit a parse tree produced by glGrammarParser#alphaNum.
+glGrammarListener.prototype.exitAlphaNum = function(ctx) {
+};
+
+
+// Enter a parse tree produced by glGrammarParser#start.
+glGrammarListener.prototype.enterStart = function(ctx) {
+};
+
+// Exit a parse tree produced by glGrammarParser#start.
+glGrammarListener.prototype.exitStart = function(ctx) {
 };
 
 
@@ -77,39 +140,11 @@ glGrammarListener.prototype.exitSize = function(ctx) {
 
 // Enter a parse tree produced by glGrammarParser#endProgram.
 ChildGlGrammarListener.prototype.enterEndProgram = function(ctx) {
-    webglImpl.drawShape();
 };
 
 // Exit a parse tree produced by glGrammarParser#endProgram.
 ChildGlGrammarListener.prototype.exitEndProgram = function(ctx) {
 };
 
-
-
-ChildGlGrammarListener.prototype.exitEmoticon = function(ctx) {      
-    var emoticon = ctx.getText();        
-    
-    if(emoticon == ':-)' || emoticon == ':)')
-    {
-        this.Res.write("🙂");        
-    }
-    
-    if(emoticon == ':-(' || emoticon == ':(')
-    {
-        this.Res.write("🙁");            
-    }
-}; 
-
-ChildGlGrammarListener.prototype.enterCommand = function(ctx) {          
-    if(ctx.SAYS() != null)
-        this.Res.write(ctx.SAYS().getText() + ':' + '<p>');
-
-    if(ctx.SHOUTS() != null)
-        this.Res.write(ctx.SHOUTS().getText() + ':' + '<p style="text-transform: uppercase">');
-};
-
-ChildGlGrammarListener.prototype.exitLine = function(ctx) {              
-    this.Res.write("</p>");
-};
 
 exports.ChildGlGrammarListener = ChildGlGrammarListener;

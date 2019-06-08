@@ -29,6 +29,8 @@ var global_size = 0;
 var global_x = 0;
 var global_y = 0;
 
+var action;
+
 //ANTLR STUFF
 const antlr4 = require('./antlr4/index');
 const glGrammarLexer = require('./glGrammarLexer');
@@ -59,7 +61,7 @@ window.onload = function init () {
     thetaLoc = gl.getUniformLocation(program, "theta");
     globalPosition = gl.getUniformLocation(program, "tr");
     globalScale = gl.getUniformLocation(program, "scale");
-    
+
     var input = txt;   
     var chars = new antlr4.InputStream(input);
     var lexer = new glGrammarLexer.glGrammarLexer(chars);
@@ -89,6 +91,7 @@ window.onload = function init () {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         for (var i = 0; i < objects.length; i++) {
             objects[i].render();
+            console.log(objects.length);
         }
 
         requestAnimFrame(render_scene);
@@ -314,8 +317,6 @@ function builder () {
         objects.push(newSquare);
     }
 
-    //this.createCylinder();
-
 }
 
 exports.drawShape = function () {
@@ -369,6 +370,16 @@ exports.setGlobalYCoord = function (y)
 {
     global_y = y/10;
 };
+
+exports.setAction = function (act)
+{
+    action = act;
+}
+
+exports.getAction = function ()
+{
+    return action;
+}
 
 
 
