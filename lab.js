@@ -109,7 +109,7 @@ function builder () {
         this.translation = 0;
         this.id = id;
         
-        this.center_matrix = [-3, -3, -3];
+        this.center_matrix = [0, 0, 0];
         
         this.select_color = vec4(0, 0, 1, 0.1);
 
@@ -193,6 +193,7 @@ function builder () {
                this.rotation += this.rotationSpeed;
             }   
 
+
                 gl.uniform3fv(globalPosition, this.center_matrix);          
 
                 this.theta[this.axis] = this.rotation;
@@ -201,7 +202,7 @@ function builder () {
                 this.scale_matrix[this.saxis] = this.scale;
                 gl.uniform3fv(globalScale, this.scale_matrix);
 
-                this.translation_matrix[this.taxis] = this.translation;
+                //this.translation_matrix[this.taxis] = this.translation;
                 gl.uniform3fv(globalPosition, this.translation_matrix);  
 
                 gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length);
@@ -316,11 +317,7 @@ function builder () {
         var newCircle = new this.circle(0, 0, 0, r, id);
         newCircle.draw();
 
-        newCircle.taxis = newCircle.txAxis;
-        newCircle.translation = x;
-
-        newCircle.taxis = newCircle.tyAxis;
-        newCircle.translation = y;
+        newCircle.translation_matrix = [x,y,0];
 
         objects.push(newCircle);
     }
@@ -328,14 +325,11 @@ function builder () {
     this.createSquare = function (x,y,scl,id) {
         var newSquare = new this.square(0, 0, 0, scl, id);
         newSquare.draw();
-        
-        newSquare.taxis = newSquare.txAxis;
-        newSquare.translation = x;
 
-        newSquare.taxis = newSquare.tyAxis;
-        newSquare.translation = y;
-
+        newSquare.translation_matrix = [x,y,0];
+     
         objects.push(newSquare);
+      
     }
 
 }
@@ -381,17 +375,17 @@ exports.setShapeCircle = function ()
 
 exports.setGlobalSize = function (size)
 {
-    global_size = size/6;
+    global_size = size / 4;
 };
 
 exports.setGlobalXCoord = function (x)
 {
-    global_x = (x-10) / 10;
+    global_x = x / 10;
 };
 
 exports.setGlobalYCoord = function (y)
 {
-    global_y = (y-5) / 10;
+    global_y = y / 10;
 };
 
 exports.setAction = function (act)

@@ -91,8 +91,8 @@ ChildGlGrammarListener.prototype.exitColor = function(ctx) {
 
 // Enter a parse tree produced by glGrammarParser#position.
 glGrammarListener.prototype.enterPosition = function(ctx) {
-    webglImpl.setGlobalXCoord(ctx.DIGIT(0));
-    webglImpl.setGlobalYCoord(ctx.DIGIT(1));
+    webglImpl.setGlobalXCoord(ctx.DIGIT(0) - 10);
+    webglImpl.setGlobalYCoord(ctx.DIGIT(1) - 5);
 };
 
 // Exit a parse tree produced by glGrammarParser#position.

@@ -1,8 +1,8 @@
 BEGIN 
     myProgram 
         { 
-            DRAW (CIRCLE myCircle SIZE 1 COLOR RED AT 3,2);
-            DRAW (SQUARE mySquare SIZE 1 COLOR BLUE AT 0,0);
+            DRAW (CIRCLE myCircle SIZE 1 COLOR RED AT 5,5);
+            DRAW (SQUARE mySquare SIZE 1 COLOR BLUE AT 3,0);
            
             ROTATE (mySquare 10);
         } 
