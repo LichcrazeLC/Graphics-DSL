@@ -99,8 +99,8 @@ glGrammarListener.prototype.enterPosition = function(ctx) {
 glGrammarListener.prototype.exitPosition = function(ctx) {
     if (webglImpl.getAction() == 'DRAW')
         webglImpl.drawShape();
-    else if (webglImpl.getAction() == 'ROTATE'){
-        
+    else if (webglImpl.getAction() == 'MOVE'){
+        webglImpl.moveObject();
     }
 };
 

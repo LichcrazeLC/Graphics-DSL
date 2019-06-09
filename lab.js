@@ -73,16 +73,6 @@ window.onload = function init () {
     var customListener = new ChildGlGrammarListener();
     antlr4.tree.ParseTreeWalker.DEFAULT.walk(customListener, tree);
 
-    // spinX_button.onclick = function () {objects[currently_selected_index].axis = objects[currently_selected_index].xAxis; objects[currently_selected_index].rotating = true; objects[currently_selected_index].rotation = 0;};
-    // spinY_button.onclick = function () {objects[currently_selected_index].axis = objects[currently_selected_index].yAxis; objects[currently_selected_index].rotating = true; objects[currently_selected_index].rotation = 0;};
-    // spinZ_button.onclick = function () {objects[currently_selected_index].axis = objects[currently_selected_index].zAxis; objects[currently_selected_index].rotating = true; objects[currently_selected_index].rotation = 0;};
-
-    // var sliderRotationx = document.getElementById("X_rotation_slider");
-    // sliderRotationx.oninput = function() {objects[currently_selected_index].axis = objects[currently_selected_index].xAxis; objects[currently_selected_index].rotating = false; objects[currently_selected_index].rotation = sliderRotationx.value;};
-
-    // var sliderx = document.getElementById("X_translation_slider");
-    // sliderx.oninput = function() {objects[currently_selected_index].taxis = objects[currently_selected_index].txAxis; objects[currently_selected_index].translation = sliderx.value;};
-
     // var sliderScalex = document.getElementById("X_scale_slider");
     // sliderScalex.oninput = function() {objects[currently_selected_index].saxis = objects[currently_selected_index].sxAxis; objects[currently_selected_index].scale = sliderScalex.value;};
 
@@ -302,7 +292,7 @@ function builder () {
                 gl.uniform3fv(globalScale, this.scale_matrix);
 
         
-                this.translation_matrix[this.taxis] = this.translation;
+                //this.translation_matrix[this.taxis] = this.translation;
                 gl.uniform3fv(globalPosition, this.translation_matrix);
 
             
@@ -410,6 +400,15 @@ exports.rotateObject = function ()
             element.axis = element.zAxis;
             element.rotationSpeed = global_size;
             element.rotating = true;
+        }
+    });
+}
+
+exports.moveObject = function ()
+{
+    objects.forEach(element => {
+        if (element.id == targetObject){
+            element.translation_matrix = [global_x, global_y, 0];
         }
     });
 }

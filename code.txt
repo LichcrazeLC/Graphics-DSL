@@ -2,8 +2,24 @@ BEGIN
     myProgram 
         { 
             DRAW (CIRCLE myCircle SIZE 1 COLOR RED AT 5,5);
-            DRAW (SQUARE mySquare SIZE 1 COLOR BLUE AT 3,0);
-           
+            DRAW (CIRCLE myCircle SIZE 1 COLOR BLUE AT 10,5);
+            DRAW (CIRCLE myCircle SIZE 1 COLOR GREEN AT 10,10);
+            DRAW (CIRCLE myCircle SIZE 1 COLOR BLACK AT 5,10);
+            DRAW (CIRCLE myCircle SIZE 2 COLOR GREEN AT 20,8);
+
+
+            DRAW (SQUARE mySquare SIZE 1 COLOR BLUE AT 5,5);
+            DRAW (SQUARE mySquare1 SIZE 1 COLOR RED AT 10,5);
+            DRAW (SQUARE mySquare2 SIZE 1 COLOR BLACK AT 10,10);
+            DRAW (SQUARE mySquare3 SIZE 1 COLOR GREEN AT 5,10);
+            DRAW (SQUARE mySquare4 SIZE 2 COLOR BLACK AT 20,8);
+
+
             ROTATE (mySquare 10);
+            ROTATE (mySquare1 20);
+            ROTATE (mySquare2 0);
+            ROTATE (mySquare3 30);
+            ROTATE (mySquare4 5);
+
         } 
 END
